@@ -3,10 +3,10 @@ import { Users, Calendar, BookOpen, FileQuestion } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const cards = [
-  { title: 'Peserta', icon: Users, to: '/peserta', color: 'bg-blue-500' },
-  { title: 'Agenda Ujian', icon: Calendar, to: '/agenda', color: 'bg-green-500' },
-  { title: 'Mata Pelajaran', icon: BookOpen, to: '/mapel', color: 'bg-orange-500' },
-  { title: 'Bank Soal', icon: FileQuestion, to: '/bank-soal', color: 'bg-purple-500' },
+  { title: 'Peserta', icon: Users, to: '/admin/peserta', color: 'bg-blue-500' },
+  { title: 'Agenda Ujian', icon: Calendar, to: '/admin/agenda', color: 'bg-green-500' },
+  { title: 'Mata Pelajaran', icon: BookOpen, to: '/admin/mapel', color: 'bg-orange-500' },
+  { title: 'Bank Soal', icon: FileQuestion, to: '/admin/bank-soal', color: 'bg-purple-500' },
 ];
 
 export function Dashboard() {
@@ -31,7 +31,7 @@ export function Dashboard() {
       </div>
       
       <div className="mt-8 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">Selamat Datang di Aplikasi CBT</h3>
+        <h3 className="text-lg font-bold text-gray-800 mb-4">Selamat Datang di Panel Admin CBT</h3>
         <p className="text-gray-600">
           Silakan gunakan menu di samping untuk mengelola data Peserta, Agenda Ujian, Mata Pelajaran, dan Bank Soal.
         </p>
