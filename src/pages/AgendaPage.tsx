@@ -4,7 +4,7 @@ import { Table } from '@/components/Table';
 import { Modal } from '@/components/Modal';
 import { db } from '@/firebase';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
-import { Plus } from 'lucide-react';
+import { Plus, RefreshCw } from 'lucide-react';
 
 interface Agenda {
   id: string;
@@ -36,6 +36,15 @@ export function AgendaPage() {
     const querySnapshot = await getDocs(collection(db, 'Agenda Ujian'));
     const items = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Agenda));
     setData(items);
+  };
+
+  const generateToken = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let token = '';
+    for (let i = 0; i < 6; i++) {
+      token += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setFormData(prev => ({ ...prev, token_ujian: token }));
   };
 
   useEffect(() => {
@@ -160,13 +169,23 @@ export function AgendaPage() {
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">Token Ujian</label>
-            <input
-              required
-              type="text"
-              value={formData.token_ujian}
-              onChange={e => setFormData({ ...formData, token_ujian: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
+            <div className="flex gap-2">
+              <input
+                required
+                type="text"
+                value={formData.token_ujian}
+                onChange={e => setFormData({ ...formData, token_ujian: e.target.value })}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+              <button
+                type="button"
+                onClick={generateToken}
+                className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 border border-gray-300 transition-colors"
+                title="Generate Token"
+              >
+                <RefreshCw className="h-5 w-5" />
+              </button>
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">

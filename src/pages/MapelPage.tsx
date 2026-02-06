@@ -12,17 +12,22 @@ interface Mapel {
   durasi_ujian: string;
   jumlah_soal: string;
   status_mata_pelajaran: string;
+  agenda_id?: string;
+  agenda_nama?: string;
 }
 
 const INITIAL_STATE = {
   mata_pelajaran: '',
   durasi_ujian: '',
   jumlah_soal: '',
-  status_mata_pelajaran: 'Aktif'
+  status_mata_pelajaran: 'Aktif',
+  agenda_id: '',
+  agenda_nama: ''
 };
 
 export function MapelPage() {
   const [data, setData] = useState<Mapel[]>([]);
+  const [agendas, setAgendas] = useState<{id: string, agenda_ujian: string}[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState(INITIAL_STATE);
@@ -34,8 +39,15 @@ export function MapelPage() {
     setData(items);
   };
 
+  const fetchAgendas = async () => {
+    const querySnapshot = await getDocs(collection(db, 'Agenda Ujian'));
+    const items = querySnapshot.docs.map(doc => ({ id: doc.id, agenda_ujian: doc.data().agenda_ujian }));
+    setAgendas(items);
+  };
+
   useEffect(() => {
     fetchMapel();
+    fetchAgendas();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -65,7 +77,9 @@ export function MapelPage() {
       mata_pelajaran: item.mata_pelajaran,
       durasi_ujian: item.durasi_ujian,
       jumlah_soal: item.jumlah_soal,
-      status_mata_pelajaran: item.status_mata_pelajaran
+      status_mata_pelajaran: item.status_mata_pelajaran,
+      agenda_id: item.agenda_id || '',
+      agenda_nama: item.agenda_nama || ''
     });
     setEditingId(item.id);
     setIsModalOpen(true);
@@ -84,6 +98,7 @@ export function MapelPage() {
   };
 
   const columns = [
+    { header: 'Agenda', accessor: 'agenda_nama' as keyof Mapel },
     { header: 'Mata Pelajaran', accessor: 'mata_pelajaran' as keyof Mapel },
     { header: 'Durasi (Menit)', accessor: 'durasi_ujian' as keyof Mapel },
     { header: 'Jumlah Soal', accessor: 'jumlah_soal' as keyof Mapel },
@@ -131,6 +146,29 @@ export function MapelPage() {
         title={editingId ? 'Edit Mata Pelajaran' : 'Tambah Mata Pelajaran'}
       >
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Agenda Ujian</label>
+            <select
+              required
+              value={formData.agenda_id}
+              onChange={e => {
+                const selectedAgenda = agendas.find(a => a.id === e.target.value);
+                setFormData({ 
+                  ...formData, 
+                  agenda_id: e.target.value,
+                  agenda_nama: selectedAgenda ? selectedAgenda.agenda_ujian : '' 
+                });
+              }}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+            >
+              <option value="">Pilih Agenda</option>
+              {agendas.map(agenda => (
+                <option key={agenda.id} value={agenda.id}>
+                  {agenda.agenda_ujian}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">Mata Pelajaran</label>
             <input
