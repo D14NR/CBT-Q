@@ -176,35 +176,69 @@ export function BankSoalPage() {
       return;
     }
 
-    const baseTemplate = {
+    // Define all base fields
+    const baseFields: any = {
       type_soal: 'Pilihan Ganda Tunggal (PG)',
       no_soal: 1,
-      pertanyaan: 'Isi pertanyaan disini',
+      pertanyaan: 'Isi pertanyaan disini...',
       gambar_url: '',
-      pilihan_a: 'Opsi A',
-      pilihan_b: 'Opsi B',
-      pilihan_c: 'Opsi C',
-      pilihan_d: 'Opsi D',
-      pilihan_e: 'Opsi E',
-      kunci_jawaban: 'A',
-      pernyataan_1: '',
-      pernyataan_2: '',
-      pasangan_kiri_1: '',
-      pasangan_kanan_1: '',
+      pilihan_a: '',
+      pilihan_b: '',
+      pilihan_c: '',
+      pilihan_d: '',
+      pilihan_e: '',
+      kunci_jawaban: '',
     };
 
+    // Add dynamic fields (Pernyataan 1-8, Pasangan 1-8)
+    for (let i = 1; i <= 8; i++) {
+        baseFields[`pernyataan_${i}`] = '';
+        baseFields[`pasangan_kiri_${i}`] = '';
+        baseFields[`pasangan_kanan_${i}`] = '';
+    }
+
     let templateData = [];
+
+    // Create Example Rows
+    const examplePG = {
+        ...baseFields,
+        type_soal: 'Pilihan Ganda Tunggal (PG)',
+        no_soal: 1,
+        pertanyaan: 'Contoh Soal PG',
+        pilihan_a: 'Jawaban A',
+        pilihan_b: 'Jawaban B',
+        pilihan_c: 'Jawaban C',
+        pilihan_d: 'Jawaban D',
+        pilihan_e: 'Jawaban E',
+        kunci_jawaban: 'A'
+    };
+
+    const exampleMJ = {
+        ...baseFields,
+        type_soal: 'Menjodohkan (MJ)',
+        no_soal: 2,
+        pertanyaan: 'Contoh Soal Menjodohkan',
+        pasangan_kiri_1: 'Indonesia',
+        pasangan_kanan_1: 'Jakarta',
+        pasangan_kiri_2: 'Jepang',
+        pasangan_kanan_2: 'Tokyo',
+        kunci_jawaban: '1A2B'
+    };
+
     if (importMapelId === 'all') {
        // Add 'Mata Pelajaran' column for clarity
-       templateData = [{ mata_pelajaran: 'Matematika', ...baseTemplate }];
+       templateData = [
+           { mata_pelajaran: 'Matematika', ...examplePG },
+           { mata_pelajaran: 'Bahasa Indonesia', ...exampleMJ }
+       ];
     } else {
-       templateData = [baseTemplate];
+       templateData = [examplePG, exampleMJ];
     }
 
     const ws = utils.json_to_sheet(templateData);
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, "Template_Soal");
-    writeFile(wb, "Template_Bank_Soal.xlsx");
+    writeFile(wb, "Template_Bank_Soal_Lengkap.xlsx");
   };
 
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
